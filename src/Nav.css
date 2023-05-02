@@ -1,0 +1,9 @@
+.nav__contents{
+    display: flex;
+    justify-content: space-between ;
+}
+
+.nav__logo{
+    position: fixed;
+    right:20px 
+}
