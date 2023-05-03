@@ -52,7 +52,7 @@ function App() {
           </a>
         </span>
       </header> */}
-      <Homescreen/>
+      <Homescreen />
     </div>
   );
 }
