@@ -1,58 +1,49 @@
-import React from 'react';
-// import logo from './logo.svg';
-import { Counter } from './features/counter/Counter';
 import './App.css';
-import Homescreen from './Homescreen';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import Homescreen from './screens/Homescreen';
+import Login from './screens/Login';
+import { auth } from './firebase';
+import Profile from "./screens/Profile";
+import { logout, login, selectUser } from './features/counter/userSlice';
+// import Homescreen from './screens/Homescreen';
 
 function App() {
+  const user = useSelector(selectUser);
+  const dispatch = useDispatch()
+  useEffect(() => {
+    const unSubscribed = auth.onAuthStateChanged(userAuth => {
+      if (userAuth) {
+        dispatch(
+          login({
+            uid: userAuth.uid,
+            email: userAuth.email
+          }))
+      } else {
+        dispatch(logout)
+      }
+
+    })
+    return unSubscribed;
+  }, [])
   return (
     <div className="App">
-      {/* <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <Counter />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <span>
-          <span>Learn </span>
-          <a
-            className="App-link"
-            href="https://reactjs.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux-toolkit.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux Toolkit
-          </a>
-          ,<span> and </span>
-          <a
-            className="App-link"
-            href="https://react-redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React Redux
-          </a>
-        </span>
-      </header> */}
-      <Homescreen />
+      {/* <Homescreen /> */}
+      <Router>
+        {!user ? (
+          <Login />
+        ) : (
+
+          <Routes>
+            <Route path='/' element={<Homescreen />}>
+              <Route path="Profile" element={<Profile />} />
+            </Route>
+          </Routes>
+        )}
+      </Router>
+
     </div>
   );
 }
